@@ -167,6 +167,7 @@ export class PDFSlick {
       ignoreDestinationZoom: false,
     });
     const history = new PDFHistory({ eventBus, linkService });
+    linkService.setHistory(history);
 
     const viewerOptions = {
       container,
@@ -215,6 +216,7 @@ export class PDFSlick {
 
     this.eventBus = eventBus;
     this.linkService = linkService;
+    this.history = history;
     this.viewer = pdfViewer;
     this.linkService.setViewer(pdfViewer);
 
