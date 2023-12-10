@@ -166,6 +166,7 @@ export class PDFSlick {
       externalLinkRel: "noopener noreferrer nofollow",
       ignoreDestinationZoom: false,
     });
+    const history = new PDFHistory({ eventBus, linkService });
 
     const viewerOptions = {
       container,
