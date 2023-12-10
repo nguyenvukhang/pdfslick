@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "DROP DIST"
+rm -rf dist
+npm run build
+
+rm -rf ~/repos/math/web/deps/@pdfslick/core/dist
+mkdir -p ~/repos/math/web/deps/@pdfslick/core
+echo "INSTALL DIST"
+cp -r dist ~/repos/math/web/deps/@pdfslick/core/dist
