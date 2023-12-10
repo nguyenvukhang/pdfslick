@@ -17,6 +17,7 @@ import {
   PDFFindController,
   PDFPageView,
   PDFSinglePageViewer,
+  PDFHistory,
 } from "pdfjs-dist/web/pdf_viewer";
 
 import type {
@@ -64,7 +65,7 @@ const METRIC_PAGE_NAMES = {
 function getPageName(
   size: { width: number; height: number },
   isPortrait: boolean,
-  pageNames: Record<string, string>
+  pageNames: Record<string, string>,
 ) {
   const width = isPortrait ? size.width : size.height;
   const height = isPortrait ? size.height : size.width;
@@ -82,6 +83,7 @@ export class PDFSlick {
   url: string | URL | undefined;
   eventBus: EventBus;
   linkService: PDFLinkService;
+  history: PDFHistory;
   downloadManager: DownloadManager | null = null;
   findController: PDFFindController | null = null;
   pdfPresentationMode: PDFPresentationMode | null = null;
@@ -142,7 +144,7 @@ export class PDFSlick {
     ) {
       if (this.pageColors.background || this.pageColors.foreground) {
         console.warn(
-          "PDFViewer: Ignoring `pageColors`-option, since the browser doesn't support the values used."
+          "PDFViewer: Ignoring `pageColors`-option, since the browser doesn't support the values used.",
         );
       }
       this.pageColors = null;
@@ -198,7 +200,7 @@ export class PDFSlick {
         thumbnailWidth: this.thumbnailWidth,
       });
       renderingQueue.setThumbnailViewer(
-        this.thumbnailViewer as unknown as TPDFThumbnailViewer
+        this.thumbnailViewer as unknown as TPDFThumbnailViewer,
       );
     }
 
@@ -261,7 +263,7 @@ export class PDFSlick {
     const attachments = new Map(
       Object.keys(rawAttachments ?? {})
         .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-        .map((key) => [key, rawAttachments[key]])
+        .map((key) => [key, rawAttachments[key]]),
     );
     this.store.setState({ attachments });
 
@@ -301,7 +303,7 @@ export class PDFSlick {
   async #parseDocumentInfo() {
     const { info, contentLength } = (await this.document!.getMetadata()) as any;
     const pageSize = await this.document!.getPage(
-      this.store.getState().pageNumber
+      this.store.getState().pageNumber,
     ).then((pdfPage) => {
       return this.#parsePageSize(getPageSizeInches(pdfPage), 0);
     });
@@ -324,7 +326,7 @@ export class PDFSlick {
 
   async #parsePageSize(
     pageSizeInches: { width: number; height: number },
-    pagesRotation: number
+    pagesRotation: number,
   ) {
     if (!pageSizeInches) {
       return undefined;
@@ -396,16 +398,16 @@ export class PDFSlick {
       this.l10n.get(
         `document_properties_page_size_unit_${
           _isNonMetricLocale ? "inches" : "millimeters"
-        }`
+        }`,
       ),
       rawName &&
         this.l10n.get(
-          `document_properties_page_size_name_${rawName.toLowerCase()}`
+          `document_properties_page_size_name_${rawName.toLowerCase()}`,
         ),
       this.l10n.get(
         `document_properties_page_size_orientation_${
           isPortrait ? "portrait" : "landscape"
-        }`
+        }`,
       ),
     ]);
 
@@ -432,7 +434,7 @@ export class PDFSlick {
   openOrDownloadData(
     element: HTMLElement,
     content: Uint8Array,
-    filename: string
+    filename: string,
   ) {
     this.downloadManager?.openOrDownloadData(element, content, filename);
   }
@@ -546,7 +548,7 @@ export class PDFSlick {
       printResolution,
       optionalContentConfigPromise,
       null, // this._printAnnotationStoragePromise,
-      this.l10n
+      this.l10n,
     );
     this.printService = printService;
     this.forceRendering();
@@ -693,7 +695,7 @@ export class PDFSlick {
   setAnnotationEditorParams(
     annotationEditorParams:
       | { type: number; value: any }
-      | { type: number; value: any }[]
+      | { type: number; value: any }[],
   ) {
     const pairs = Array.isArray(annotationEditorParams)
       ? annotationEditorParams
@@ -778,7 +780,7 @@ export class PDFSlick {
   on(
     eventName: TEventBusName,
     listener: TEventBusListener,
-    options?: TEventBusOptions
+    options?: TEventBusOptions,
   ) {
     this.eventBus.on(eventName, listener, options);
   }
@@ -792,7 +794,7 @@ export class PDFSlick {
   off(
     eventName: TEventBusName,
     listener: TEventBusListener,
-    options?: TEventBusOptions
+    options?: TEventBusOptions,
   ) {
     this.eventBus.off(eventName, listener, options);
   }
